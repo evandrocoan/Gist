@@ -127,3 +127,7 @@ Use the `Gist` / `Add File To Gist` command to see a list of your Gists. Selecti
 Source: https://github.com/condemil/Gist
 
 Authors: [Dmitry Budaev](https://github.com/condemil/), [Alexey Ermakov](https://github.com/technocoreai)
+
+## License
+See the `LICENSE` file under this repository.
+
