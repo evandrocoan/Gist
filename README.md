@@ -1,6 +1,11 @@
-# Gist [![Build Status](https://travis-ci.org/condemil/Gist.svg?branch=master)](https://travis-ci.org/condemil/Gist)
+# Gist
 
-A [Sublime Text 2/3](http://www.sublimetext.com/) plugin for creating and editing Gists.
+[![Build Status](https://travis-ci.org/condemil/Gist.svg?branch=master)](https://travis-ci.org/condemil/Gist)
+[![Coverage Status](https://coveralls.io/repos/github/condemil/Gist/badge.svg)](https://coveralls.io/github/condemil/Gist)
+[![Package Control](https://img.shields.io/packagecontrol/dt/Gist.svg)](https://packagecontrol.io/packages/Gist)
+
+
+A [Sublime Text 3](http://www.sublimetext.com/3) plugin for creating and editing Gists.
 
 
 # Installation
@@ -22,7 +27,7 @@ As of [2013-05-16](https://github.com/blog/1509-personal-api-tokens), you can ge
 **All other authorization methods is deprecated.**
 
 ## Web
-* Account Settings -> [Applications](https://github.com/settings/applications)
+* Account Settings -> [Personal access tokens](https://github.com/settings/tokens)
 * "Generate new token" under "Personal access tokens"
 * For "Token description" you should give it a meaningful name, Example: sublime gist
 * Under "Select scopes" you can just select gist
@@ -36,6 +41,12 @@ Here's a command you can run from your terminal to generate a token via curl:
     curl -v -u USERNAME -X POST https://api.github.com/authorizations --data "{\"scopes\":[\"gist\"], \"note\": \"SublimeText 2/3 Gist plugin\"}"
 
 Where USERNAME is your Github username. Save the token generated and paste it in the settings section under the token option.
+
+If OTP is enabled on your account, this will return 401 error code, use:
+
+    curl -v -u USERNAME -H "X-GitHub-OTP: OTPCODE" -X POST https://api.github.com/authorizations --data "{\"scopes\":[\"gist\"], \"note\": \"SublimeText 2/3 Gist plugin\"}"
+    
+Where OTPCODE is the code your authenticator app shows you.
 
 
 # Options
@@ -51,13 +62,9 @@ Edit the settings file (it should open automatically the first time you use a Gi
     You can enter https proxy here
     Format: "http://user:pass@proxy:port"
 
-*   `"enterprise": false`
+*   `"api_url": ""`
 
-    Set this to true if you want to use a enterprise version of github instead of github.com
-
-*   `"url": ""`
-
-    Set the url of the enterprise version of github you want to use. Leave this blank if the enterprise option is set to false.
+    Set the url of the enterprise version of github you want to use. Defaults to github.com
 
 *   `"max_gists": 100`
 
