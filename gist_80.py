@@ -2,7 +2,6 @@ import functools
 import json
 import os
 import shutil
-import sys
 import tempfile
 import threading
 import traceback
@@ -15,16 +14,14 @@ except ImportError:
     from test.stubs import sublime
     from test.stubs import sublime_plugin
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-
-from exceptions import MissingCredentialsException
-from gist_helpers import (
+from gist_20_exceptions import MissingCredentialsException
+from gist_60_helpers import (
     gistify_view,
     gists_filter,
     set_syntax,
     ungistify_view,
 )
-from gist_request import api_request
+from gist_40_request import api_request
 
 settings = None
 

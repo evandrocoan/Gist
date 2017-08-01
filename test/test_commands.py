@@ -2,16 +2,13 @@ from threading import Lock
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-import gist
-import git_io
+import gist_80 as gist
 from test.stubs import github_api, sublime
 
 DEFAULT_GISTS_URL = 'https://api.github.com/gists?per_page=100'
 DEFAULT_STARRED_GISTS_URL = 'https://api.github.com/gists/starred?per_page=100'
 DEFAULT_ORGS_URL = 'https://api.github.com/user/orgs'
 
-TEST_GITHUB_URL = 'https://github.test/some/url'
-TEST_GITIO_SHORT_URL = 'https://git.io.test/some/short/url'
 TEST_GIST_URL = 'https://api.github.test/gists/45681ac0a18a46b487620c6836e1510c'
 
 TEST_ORG_MEMBERS_URL = 'https://api.github.com/orgs/0/members'
@@ -25,31 +22,13 @@ class TestGistCommand(TestCase):
         gist_copy_url.run(edit=None)
         sublime.set_clipboard.assert_called_with(None)
 
-    @patch('gist.webbrowser')
+    @patch('gist_80.webbrowser')
     def test_gist_open_browser(self, patch_gist_webbrowser):
         gist_open_browser = gist.GistOpenBrowser()
         gist_open_browser.run(edit=None)
         patch_gist_webbrowser.open.assert_called_with(None)
 
-    def test_gist_gitio(self):
-        gist_gitio = git_io.GistGitioCommand()
-        gist_gitio.run(edit=None)
-        gist_gitio.view.window().show_input_panel.assert_called_with('GitHub URL:', '', gist_gitio.on_done, None, None)
-
-        with patch('git_io.git_io', return_value=(None, TEST_GITIO_SHORT_URL)) as mocked_git_io:
-            gist_gitio.on_done(TEST_GITHUB_URL)
-            mocked_git_io.assert_called_with(TEST_GITHUB_URL)
-            sublime.set_clipboard.assert_called_with(TEST_GITIO_SHORT_URL)
-            sublime.status_message.assert_called_with('Gist: Copied to Clipboard! ' + TEST_GITIO_SHORT_URL)
-
-        with patch('git_io.git_io', return_value=('Some error', None)) as mocked_git_io:
-            gist_gitio.on_done(TEST_GITHUB_URL)
-            mocked_git_io.assert_called_with(TEST_GITHUB_URL)
-            sublime.error_message.assert_called_with('Some error')
-            gist_gitio.view.window().show_input_panel.assert_called_with(
-                'GitHub URL:', TEST_GITHUB_URL, gist_gitio.on_done, None, None)
-
-    @patch('gist.api_request')
+    @patch('gist_80.api_request')
     def test_gist_list_command_base(self, mocked_api_request):
         gist.plugin_loaded()
         mocked_api_request.side_effect = [github_api.GIST_STARRED_LIST, github_api.GIST_LIST]
@@ -57,7 +36,7 @@ class TestGistCommand(TestCase):
         gist.settings.set('include_orgs', ['some org'])
         gist_list_base = gist.GistListCommandBase()
 
-        with patch('gist.GistListCommandBase.get_window') as mocked_get_window:
+        with patch('gist_80.GistListCommandBase.get_window') as mocked_get_window:
             mocked_window = Mock()
             mocked_get_window.return_value = mocked_window
             gist_list_base.run()
@@ -92,7 +71,7 @@ class TestGistCommand(TestCase):
             # pass flow
             mocked_window.reset_mock()
             mocked_api_request.reset_mock()
-            with patch('gist.GistListCommandBase.handle_gist') as mocked_handle_gist:
+            with patch('gist_80.GistListCommandBase.handle_gist') as mocked_handle_gist:
                 on_gist_num(-1)
 
                 self.assertEqual(mocked_api_request.call_count, 0)
@@ -102,7 +81,7 @@ class TestGistCommand(TestCase):
             # personal gists flow
             mocked_window.reset_mock()
             mocked_api_request.reset_mock()
-            with patch('gist.GistListCommandBase.handle_gist') as mocked_handle_gist:
+            with patch('gist_80.GistListCommandBase.handle_gist') as mocked_handle_gist:
                 on_gist_num(0)
 
                 self.assertEqual(mocked_api_request.call_count, 0)
@@ -137,7 +116,7 @@ class TestGistCommand(TestCase):
         self.assertRaises(NotImplementedError, gist_list_base.handle_gist, None)
         self.assertRaises(NotImplementedError, gist_list_base.get_window)
 
-    @patch('gist.open_gist')
+    @patch('gist_80.open_gist')
     def test_gist_list_command(self, mocked_open_gist):
         mocked_window = Mock()
         gist_list = gist.GistListCommand(mocked_window)
@@ -145,7 +124,7 @@ class TestGistCommand(TestCase):
         mocked_open_gist.assert_called_with(TEST_GIST_URL)
         self.assertEqual(gist_list.get_window(), mocked_window)
 
-    @patch('gist.insert_gist')
+    @patch('gist_80.insert_gist')
     def test_insert_gist_list_command(self, mocked_insert_gist):
         mocked_window = Mock()
         insert_gist_list = gist.InsertGistListCommand(mocked_window)
@@ -153,7 +132,7 @@ class TestGistCommand(TestCase):
         mocked_insert_gist.assert_called_with(TEST_GIST_URL)
         self.assertEqual(insert_gist_list.get_window(), mocked_window)
 
-    @patch('gist.insert_gist_embed')
+    @patch('gist_80.insert_gist_embed')
     def test_insert_gist_embed_list_command(self, mocked_insert_gist_embed):
         mocked_window = Mock()
         insert_gist_embed_list = gist.InsertGistEmbedListCommand(mocked_window)
@@ -161,8 +140,8 @@ class TestGistCommand(TestCase):
         mocked_insert_gist_embed.assert_called_with(TEST_GIST_URL)
         self.assertEqual(insert_gist_embed_list.get_window(), mocked_window)
 
-    @patch('gist.gistify_view')
-    @patch('gist.update_gist')
+    @patch('gist_80.gistify_view')
+    @patch('gist_80.update_gist')
     def test_gist_add_file_command(self, mocked_update_gist, mocked_gistify_view):
         add_file = gist.GistAddFileCommand()
         add_file.handle_gist({'url': TEST_GIST_URL})
@@ -200,9 +179,9 @@ class TestGistCommand(TestCase):
         self.assertEqual(gist_view_command.gist_filename(), 'some gist filename')
         self.assertEqual(gist_view_command.gist_description(), 'some gist description')
 
-    @patch('gist.gistify_view')
+    @patch('gist_80.gistify_view')
     @patch('test.stubs.sublime.Region')
-    @patch('gist.create_gist')
+    @patch('gist_80.create_gist')
     def test_gist_command(self, mocked_create_gist, mocked_region, mocked_gistify_view):
         gist_command = gist.GistCommand()
         gist_command.view = sublime.View()
@@ -255,8 +234,8 @@ class TestGistCommand(TestCase):
         gist_private_command = gist.GistPrivateCommand()
         self.assertEqual(gist_private_command.mode(), 'Private')
 
-    @patch('gist.gistify_view')
-    @patch('gist.update_gist')
+    @patch('gist_80.gistify_view')
+    @patch('gist_80.update_gist')
     def test_gist_rename_file_command(self, mocked_update_gist, mocked_gistify_view):
         gist_rename_file = gist.GistRenameFileCommand()
         mocked_update_gist.return_value = 'some updated gist'
@@ -275,8 +254,8 @@ class TestGistCommand(TestCase):
         mocked_gistify_view.assert_called_with(gist_rename_file.view, 'some updated gist', 'some new filename')
         sublime.status_message.assert_called_with('Gist file renamed')
 
-    @patch('gist.gistify_view')
-    @patch('gist.update_gist')
+    @patch('gist_80.gistify_view')
+    @patch('gist_80.update_gist')
     def test_change_description_command(self, mocked_update_gist, mocked_gistify_view):
         sublime._windows[0] = sublime.Window(0)
         mocked_update_gist.return_value = 'some updated gist'
@@ -295,7 +274,7 @@ class TestGistCommand(TestCase):
         mocked_gistify_view.assert_called_with(sublime._windows[0]._view, 'some updated gist', None)
         sublime.status_message.assert_called_with('Gist description changed')
 
-    @patch('gist.update_gist')
+    @patch('gist_80.update_gist')
     def test_gist_update_file_command(self, mocked_update_gist):
         gist_update_file = gist.GistUpdateFileCommand()
         gist_update_file.run(edit=False)
@@ -304,8 +283,8 @@ class TestGistCommand(TestCase):
 
         sublime.status_message.assert_called_with('Gist updated')
 
-    @patch('gist.ungistify_view')
-    @patch('gist.update_gist')
+    @patch('gist_80.ungistify_view')
+    @patch('gist_80.update_gist')
     def test_gist_delete_file_command(self, mocked_update_gist, mocked_ungistify_view):
         gist_delete_file = gist.GistDeleteFileCommand()
         gist_delete_file.run(edit=False)
@@ -315,8 +294,8 @@ class TestGistCommand(TestCase):
 
         sublime.status_message.assert_called_with('Gist file deleted')
 
-    @patch('gist.ungistify_view')
-    @patch('gist.api_request')
+    @patch('gist_80.ungistify_view')
+    @patch('gist_80.api_request')
     def test_gist_delete_command(self, mocked_api_request, mocked_ungistify_view):
         gist_delete = gist.GistDeleteCommand()
         gist_delete.run(edit=False)
@@ -326,7 +305,7 @@ class TestGistCommand(TestCase):
 
         sublime.status_message.assert_called_with('Gist deleted')
 
-    @patch('gist.update_gist')
+    @patch('gist_80.update_gist')
     def test_gist_listener(self, mocked_update_gist):
         gist_listener = gist.GistListener()
         gist.plugin_loaded()

@@ -1,14 +1,13 @@
 import contextlib
 import json
+import urllib.request as urllib
 
 try:
     import sublime
 except ImportError:
     from test.stubs import sublime
 
-import urllib.request as urllib
-
-from exceptions import MissingCredentialsException, SimpleHTTPError
+from gist_20_exceptions import MissingCredentialsException, SimpleHTTPError
 
 
 def token_auth_string():
