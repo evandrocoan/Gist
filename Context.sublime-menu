@@ -1,3 +1,21 @@
 [
-
+    {
+        "caption": "Local History",
+        "id": "3_row",
+        "children":
+        [
+            { "caption": "-", "id": "1_row" },
+            { "caption": "-", "id": "2_row" },
+            { "caption": "-", "id": "3_row" },
+            { "caption": "-", "id": "4_row" },
+            { "command": "gist", "caption": "Create Public Gist…" },
+            { "command": "gist_private", "caption": "Create Private Gist…" },
+            { "caption": "-", "id": "5_row" },
+            { "caption": "-", "id": "6_row" },
+            { "caption": "-", "id": "7_row" },
+            { "caption": "-", "id": "8_row" },
+            { "caption": "-", "id": "9_row" },
+            { "caption": "-", "id": "10_row" },
+        ]
+    }
 ]
