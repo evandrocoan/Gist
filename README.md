@@ -8,17 +8,26 @@
 A [Sublime Text 3](http://www.sublimetext.com/3) plugin for creating and editing Gists.
 
 
-# Installation
+## Installation
 
-## Package Control
+### By Package Control
 
-Install [Package Control](http://wbond.net/sublime_packages/package_control). Gist will show up in the package list. This is the recommended installation method.
+1. Download & Install `Sublime Text 3` (https://www.sublimetext.com/3)
+1. Go to the menu `Tools -> Install Package Control`, then,
+   wait few seconds until the `Package Control` installation finishes
+1. Go to the menu `Preferences -> Package Control`
+1. Type `Package Control Add Channel` on the opened quick panel and press <kbd>Enter</kbd>
+1. Then, input the following address and press <kbd>Enter</kbd>
+   ```
+   https://raw.githubusercontent.com/evandrocoan/StudioChannel/master/channel.json
+   ```
+1. Now, go again to the menu `Preferences -> Package Control`
+1. This time type `Package Control Install Package` on the opened quick panel and press <kbd>Enter</kbd>
+1. Then, search for `Gist` and press <kbd>Enter</kbd>
 
-## Manual installation
-
-Go to the "Packages" directory (`Preferences` / `Browse Packages…`). Then clone this repository:
-
-    git clone git://github.com/condemil/Gist
+See also:
+1. [ITE - Integrated Toolset Environment](https://github.com/evandrocoan/ITE)
+1. [Package control docs](https://packagecontrol.io/docs/usage) for details.
 
 
 # Generating Access Token
@@ -45,7 +54,7 @@ Where USERNAME is your Github username. Save the token generated and paste it in
 If OTP is enabled on your account, this will return 401 error code, use:
 
     curl -v -u USERNAME -H "X-GitHub-OTP: OTPCODE" -X POST https://api.github.com/authorizations --data "{\"scopes\":[\"gist\"], \"note\": \"SublimeText 2/3 Gist plugin\"}"
-    
+
 Where OTPCODE is the code your authenticator app shows you.
 
 
